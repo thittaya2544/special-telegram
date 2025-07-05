@@ -75,11 +75,9 @@
 
           // ส่ง userId ไปยัง Apps Script
           fetch(scriptURL, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ userId: userId }),
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: userId })
           })
           .then((res) => res.json())
           .then((data) => {
