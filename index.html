@@ -74,23 +74,28 @@
           document.getElementById("status").innerText = `ยินดีต้อนรับ!`;
 
           // ส่ง userId ไปยัง Apps Script
-          fetch(scriptURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: userId })
-          })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.status === "success") {
-              window.location.href = redirectURL;
-            } else {
-              alert("เกิดข้อผิดพลาด: " + data.message);
-            }
-          })
-          .catch((err) => {
-            alert("ไม่สามารถส่งข้อมูลได้");
-            console.error(err);
-          });
+         fetch("https://script.google.com/macros/s/AKfycbzlcUI_6ndYKZd-G4u01ZfIrweeEVxBLjUKoZdaCiPkBYUImO0qo9hq6TNb6skKvkA/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    userId: userId  // ไม่ต้องมี action
+  })
+})
+.then(res => res.json())
+.then(data => {
+  if (data.status === "success") {
+    window.location.href = "https://mchlink.my.canva.site/notepreg";
+  } else {
+    alert("เกิดข้อผิดพลาด: " + data.message);
+  }
+})
+.catch(err => {
+  alert("ไม่สามารถส่งข้อมูลได้");
+  console.error(err);
+});
+
         }
       } catch (error) {
         document.getElementById("status").innerText = "เกิดข้อผิดพลาดในการโหลด LIFF: " + error.message;
