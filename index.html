@@ -2,11 +2,11 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <title>ล็อกอินผ่าน LINE</title>
+  <title>เข้าสู่ระบบด้วย LINE</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500&display=swap');
-    
+
     body {
       font-family: 'Kanit', sans-serif;
       background-color: #fef6f9;
@@ -50,56 +50,48 @@
   </style>
 </head>
 <body>
-  <h1>เข้าสู่ระบบด้วย LINE 🩷</h1>
+  <h1>เข้าสู่ระบบผ่าน LINE 💖</h1>
   <div id="status">กำลังโหลด...</div>
   <button id="btnLogin" class="pastel-btn" style="display: none;">เข้าสู่ระบบ 🦋</button>
 
   <script>
-    const liffId = "2007693716-B7D4wZow"; // ✅ LIFF ID ของคุณ
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzlcUI_6ndYKZd-G4u01ZfIrweeEVxBLjUKoZdaCiPkBYUImO0qo9hq6TNb6skKvkA/exec"; // ✅ URL จาก Apps Script (Web App)
-    const redirectURL = "https://mchlink.my.canva.site/notepreg"; // ✅ URL ปลายทางหลัง login
+    const liffId = "2007693716-B7D4wZow"; // 🔁 ใส่ LIFF ID ของคุณ
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzlcUI_6ndYKZd-G4u01ZfIrweeEVxBLjUKoZdaCiPkBYUImO0qo9hq6TNb6skKvkA/exec"; // 🔁 ใส่ Apps Script Web App URL
+    const redirectURL = "https://mchlink.my.canva.site/notepreg"; // 🔁 URL ที่ต้องการไปหลัง login
 
     async function main() {
-      try {
-        await liff.init({ liffId });
+      await liff.init({ liffId });
 
-        if (!liff.isLoggedIn()) {
-          document.getElementById("status").innerText = "กรุณาล็อกอินผ่าน LINE";
-          document.getElementById("btnLogin").style.display = "inline-block";
-          document.getElementById("btnLogin").onclick = () => liff.login();
-        } else {
-          const profile = await liff.getProfile();
-          const userId = profile.userId;
+      if (!liff.isLoggedIn()) {
+        document.getElementById("status").innerText = "กรุณาล็อกอินผ่าน LINE";
+        document.getElementById("btnLogin").style.display = "inline-block";
+        document.getElementById("btnLogin").onclick = () => liff.login();
+      } else {
+        const profile = await liff.getProfile();
+        const userId = profile.userId;
 
-          document.getElementById("status").innerText = `ยินดีต้อนรับ!`;
+        document.getElementById("status").innerText = `ยินดีต้อนรับ!`;
 
-          // ส่ง userId ไปยัง Apps Script
-         fetch("https://script.google.com/macros/s/AKfycbzlcUI_6ndYKZd-G4u01ZfIrweeEVxBLjUKoZdaCiPkBYUImO0qo9hq6TNb6skKvkA/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    userId: userId  // ไม่ต้องมี action
-  })
-})
-.then(res => res.json())
-.then(data => {
-  if (data.status === "success") {
-    window.location.href = "https://mchlink.my.canva.site/notepreg";
-  } else {
-    alert("เกิดข้อผิดพลาด: " + data.message);
-  }
-})
-.catch(err => {
-  alert("ไม่สามารถส่งข้อมูลได้");
-  console.error(err);
-});
-
-        }
-      } catch (error) {
-        document.getElementById("status").innerText = "เกิดข้อผิดพลาดในการโหลด LIFF: " + error.message;
-        console.error("LIFF init error:", error);
+        // ✅ ส่ง userId ไป Google Sheet
+        fetch(scriptURL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ userId })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            window.location.href = redirectURL;
+          } else {
+            alert("เกิดข้อผิดพลาด: " + data.message);
+          }
+        })
+        .catch(err => {
+          alert("ไม่สามารถส่งข้อมูลได้");
+          console.error(err);
+        });
       }
     }
 
