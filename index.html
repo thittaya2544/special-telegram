@@ -1,39 +1,106 @@
-async function main() {
-  try {
-    await liff.init({ liffId });
-
-    if (!liff.isLoggedIn()) {
-      document.getElementById("status").innerText = "กรุณาล็อกอินผ่าน LINE";
-      document.getElementById("btnLogin").style.display = "inline-block";
-      document.getElementById("btnLogin").onclick = () => liff.login();
-    } else {
-      const profile = await liff.getProfile();
-      const userId = profile.userId;
-
-      document.getElementById("status").innerText = `ยินดีต้อนรับ!`;
-
-      fetch(scriptURL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: userId }),
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status === "success") {
-          window.location.href = redirectURL;
-        } else {
-          alert("เกิดข้อผิดพลาด: " + data.message);
-        }
-      })
-      .catch((err) => {
-        alert("ไม่สามารถส่งข้อมูลได้");
-        console.error(err);
-      });
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>ล็อกอินผ่าน LINE</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500&display=swap');
+    
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #fef6f9;
+      color: #5a2a4a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
     }
-  } catch (error) {
-    document.getElementById("status").innerText = "เกิดข้อผิดพลาดในการโหลด LIFF: " + error.message;
-    console.error("LIFF init error:", error);
-  }
-}
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    #status {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    button.pastel-btn {
+      background-color: #ffd6e8;
+      border: 2px solid #ffa6c9;
+      border-radius: 15px;
+      color: #5a2a4a;
+      font-size: 18px;
+      font-weight: 600;
+      padding: 14px 40px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(255, 182, 193, 0.3);
+      transition: 0.3s;
+    }
+
+    button.pastel-btn:hover {
+      background-color: #ffb6cc;
+      border-color: #ff7fa3;
+    }
+  </style>
+</head>
+<body>
+  <h1>เข้าสู่ระบบด้วย LINE 🩷</h1>
+  <div id="status">กำลังโหลด...</div>
+  <button id="btnLogin" class="pastel-btn" style="display: none;">เข้าสู่ระบบ 🦋</button>
+
+  <script>
+    const liffId = "2007693716-B7D4wZow"; // ✅ LIFF ID ของคุณ
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwlxZ0n_1Lfoe6tMviNbDFMOS9xEns7S1-rfsPH5uOFaS0Ce2O2-qeYIE8Hmsfgyytu/exec"; // ✅ URL จาก Apps Script (Web App)
+    const redirectURL = "https://mchlink.my.canva.site/notepreg"; // ✅ URL ปลายทางหลัง login
+
+    async function main() {
+      try {
+        await liff.init({ liffId });
+
+        if (!liff.isLoggedIn()) {
+          document.getElementById("status").innerText = "กรุณาล็อกอินผ่าน LINE";
+          document.getElementById("btnLogin").style.display = "inline-block";
+          document.getElementById("btnLogin").onclick = () => liff.login();
+        } else {
+          const profile = await liff.getProfile();
+          const userId = profile.userId;
+
+          document.getElementById("status").innerText = `ยินดีต้อนรับ!`;
+
+          // ส่ง userId ไปยัง Apps Script
+          fetch(scriptURL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId: userId }),
+          })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "success") {
+              window.location.href = redirectURL;
+            } else {
+              alert("เกิดข้อผิดพลาด: " + data.message);
+            }
+          })
+          .catch((err) => {
+            alert("ไม่สามารถส่งข้อมูลได้");
+            console.error(err);
+          });
+        }
+      } catch (error) {
+        document.getElementById("status").innerText = "เกิดข้อผิดพลาดในการโหลด LIFF: " + error.message;
+        console.error("LIFF init error:", error);
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
