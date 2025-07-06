@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LINE Login App</title>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -233,6 +233,11 @@
         // Initialize LIFF
         async function initializeLIFF() {
             try {
+                // Check if LIFF is available
+                if (typeof liff === 'undefined') {
+                    throw new Error('LIFF SDK ไม่ถูกโหลด กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+                }
+                
                 await liff.init({ liffId: CONFIG.LIFF_ID });
                 
                 if (liff.isLoggedIn()) {
@@ -251,6 +256,12 @@
 
         // Handle login
         async function handleLogin() {
+            // Check if LIFF is available
+            if (typeof liff === 'undefined') {
+                showStatus('❌ LIFF SDK ไม่ถูกโหลด กรุณาโหลดหน้าเว็บใหม่', 'error');
+                return;
+            }
+
             if (isLoggedIn) {
                 await handleUserData();
                 return;
@@ -356,7 +367,10 @@
         }
 
         // Initialize when page loads
-        window.addEventListener('load', initializeLIFF);
+        window.addEventListener('load', function() {
+            // Wait a bit for LIFF SDK to load
+            setTimeout(initializeLIFF, 500);
+        });
     </script>
 </body>
 </html>
