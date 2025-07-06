@@ -73,12 +73,14 @@
         document.getElementById("status").innerText = `ยินดีต้อนรับ!`;
 
         // ✅ ส่ง userId ไป Google Sheet
-        fetch(scriptURL, {
+        fetch("https://script.google.com/macros/s/AKfycbzlcUI_6ndYKZd-G4u01ZfIrweeEVxBLjUKoZdaCiPkBYUImO0qo9hq6TNb6skKvkA/exec", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ userId })
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    userId: userId
+  })
         })
         .then(res => res.json())
         .then(data => {
